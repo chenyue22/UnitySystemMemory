@@ -147,6 +147,32 @@ namespace CyRayTracingSystem.Utils
 
             ((T*) address)[count++] = t;
         }
+        
+        public void Add(T* ts, int n)
+        {
+            size = Size;
+            var newCount = Count + n;
+            bool dirty = false;
+            while (newCount > capacity)
+            {
+                capacity = Mathf.Max(capacity, 2) * 2;
+                dirty = true;
+            }
+            
+            if (dirty)
+            {
+                var ptr = UnsafeUtility.Malloc(capacity * Size, Alignment, Allocator.Persistent);
+                if (count > 0)
+                {
+                    UnsafeUtility.MemCpy(ptr, (void*) address, count * size);
+                    UnsafeUtility.Free((void*) address, Allocator.Persistent);
+                }
+                address = (ulong) ptr;
+            }
+            
+            UnsafeUtility.MemCpy((T*) address + count, ts, n * size);
+            count += n;
+        }
 
         public void Add(ref T[] ts)
         {
