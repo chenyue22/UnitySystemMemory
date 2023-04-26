@@ -1,0 +1,10 @@
+{
+  "name": "com.cy.systemmemory",
+  "version": "1.0.0",
+  "displayName": "CySystemMemory",
+  "description": "This is a package for managing system memory.",
+  "author": {
+    "name": "Leo Chen",
+    "email": "441945225@qq.com"
+  }
+}
