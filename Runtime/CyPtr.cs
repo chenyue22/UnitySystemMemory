@@ -155,6 +155,12 @@ namespace CyRayTracingSystem.Utils
             gcHandle.Free();
         }
 
+        public void Reserve(void* ptr, int n)
+        {
+            address = (ulong) ptr;
+            length = n;
+        }
+
         public T this[int index]
         {
             get => *((T*) address + index);
