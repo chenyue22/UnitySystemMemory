@@ -2,6 +2,8 @@
   "name": "com.cy.systemmemory",
   "version": "1.0.0",
   "displayName": "CySystemMemory",
+  "allowUnsafeCode": true,
+  "autoReferenced": true,
   "description": "This is a package for managing system memory.",
   "author": {
     "name": "Leo Chen",
