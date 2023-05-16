@@ -77,7 +77,11 @@ namespace CyRayTracingSystem.Utils
             }
         }
 
-        public T this[int index] => ((T*) address)[index];
+        public T this[int index] 
+        {
+            get => Ptr[index];
+            set => *(Ptr + index) = value;
+        }
 
         public DynamicCyPtr(DynamicCyPtr<T> ptr, Allocator allocator = Allocator.Persistent)
         {
@@ -201,6 +205,28 @@ namespace CyRayTracingSystem.Utils
             UnsafeUtility.MemCpy((T*) address + count, (T*) src, ts.Length * size);
             gc.Free();
             count += ts.Length;
+        }
+
+        public void RemoveAt(int index)
+        {
+            if (index == count - 1)
+            {
+                count -= 1;
+            }
+
+            if (index < count)
+            {
+                if (index == 0)
+                {
+                    count -= 1;
+                    address += (ulong) size;
+                }
+                else
+                {
+                    UnsafeUtility.MemCpy(Ptr + index, Ptr + index + 1, size - index - 1);
+                    count -= 1;
+                }
+            }
         }
 
         public void Free()
