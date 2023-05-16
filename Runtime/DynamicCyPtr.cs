@@ -223,7 +223,7 @@ namespace CyRayTracingSystem.Utils
                 }
                 else
                 {
-                    UnsafeUtility.MemCpy(Ptr + index, Ptr + index + 1, size - index - 1);
+                    UnsafeUtility.MemCpy(Ptr + index, Ptr + index + 1, size * (count - index - 1));
                     count -= 1;
                 }
             }
