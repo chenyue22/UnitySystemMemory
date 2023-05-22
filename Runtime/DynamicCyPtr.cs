@@ -83,12 +83,25 @@ namespace CyRayTracingSystem.Utils
             set => *(Ptr + index) = value;
         }
 
+        private Allocator allocator;
+        
+        public DynamicCyPtr(Allocator allocator = Allocator.Persistent)
+        {
+            this.allocator = allocator;
+            size = sizeof(T);
+            alignment = UnsafeUtility.AlignOf<T>();
+            count = 0;
+            capacity = 0;
+            address = 0;
+        }
+
         public DynamicCyPtr(DynamicCyPtr<T> ptr, Allocator allocator = Allocator.Persistent)
         {
             size = ptr.Size;
             alignment = ptr.Alignment;
             count = ptr.count;
             capacity = ptr.capacity;
+            this.allocator = allocator;
             if (capacity > 0)
             {
                 address = (ulong) UnsafeUtility.Malloc(size * capacity, ptr.Alignment, allocator);
@@ -122,11 +135,12 @@ namespace CyRayTracingSystem.Utils
 
             if (dirty)
             {
-                var ptr = UnsafeUtility.Malloc(capacity * Size, Alignment, Allocator.Persistent);
+                var ptr = UnsafeUtility.Malloc(capacity * Size, Alignment, allocator);
                 if (count > 0)
                 {
                     UnsafeUtility.MemCpy(ptr, (void*) address, count * size);
-                    UnsafeUtility.Free((void*) address, Allocator.Persistent);
+                    if (allocator == Allocator.Persistent)
+                        UnsafeUtility.Free((void*) address, Allocator.Persistent);
                 }
                 address = (ulong) ptr;
             }
@@ -140,11 +154,12 @@ namespace CyRayTracingSystem.Utils
             if (newCount > capacity)
             {
                 capacity = Mathf.Max(capacity, 2) * 2;
-                var ptr = UnsafeUtility.Malloc(capacity * Size, Alignment, Allocator.Persistent);
+                var ptr = UnsafeUtility.Malloc(capacity * Size, Alignment, allocator);
                 if (count > 0)
                 {
                     UnsafeUtility.MemCpy(ptr, (void*) address, count * size);
-                    UnsafeUtility.Free((void*) address, Allocator.Persistent);
+                    if (allocator == Allocator.Persistent)
+                        UnsafeUtility.Free((void*) address, Allocator.Persistent);
                 }
                 address = (ulong) ptr;
             }
@@ -165,11 +180,12 @@ namespace CyRayTracingSystem.Utils
             
             if (dirty)
             {
-                var ptr = UnsafeUtility.Malloc(capacity * Size, Alignment, Allocator.Persistent);
+                var ptr = UnsafeUtility.Malloc(capacity * Size, Alignment, allocator);
                 if (count > 0)
                 {
                     UnsafeUtility.MemCpy(ptr, (void*) address, count * size);
-                    UnsafeUtility.Free((void*) address, Allocator.Persistent);
+                    if (allocator == Allocator.Persistent)
+                        UnsafeUtility.Free((void*) address, Allocator.Persistent);
                 }
                 address = (ulong) ptr;
             }
@@ -191,11 +207,12 @@ namespace CyRayTracingSystem.Utils
             
             if (dirty)
             {
-                var ptr = UnsafeUtility.Malloc(capacity * Size, Alignment, Allocator.Persistent);
+                var ptr = UnsafeUtility.Malloc(capacity * Size, Alignment, allocator);
                 if (count > 0)
                 {
                     UnsafeUtility.MemCpy(ptr, (void*) address, count * size);
-                    UnsafeUtility.Free((void*) address, Allocator.Persistent);
+                    if (allocator == Allocator.Persistent)
+                        UnsafeUtility.Free((void*) address, Allocator.Persistent);
                 }
                 address = (ulong) ptr;
             }
@@ -233,7 +250,8 @@ namespace CyRayTracingSystem.Utils
         {
             if (count > 0)
             {
-                UnsafeUtility.Free((void*) address, Allocator.Persistent);
+                if (allocator == Allocator.Persistent)
+                    UnsafeUtility.Free((void*) address, Allocator.Persistent);
                 count = 0;
                 capacity = 0;
                 address = 0;
