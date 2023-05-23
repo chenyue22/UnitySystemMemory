@@ -217,10 +217,10 @@ namespace CyRayTracingSystem.Utils
             UnsafeUtility.MemCpy((void*) address, (void*) ptr.address, ptr.Length * size);
         }
         
-        public void CopyFrom(void* ptr, int offset, int length)
+        public void CopyFrom(void* ptr, int index, int length)
         {
-            if (offset + length > this.length) return;
-            UnsafeUtility.MemCpy((byte*) address + offset, ptr, length);
+            if (index > this.length) return;
+            UnsafeUtility.MemCpy((byte*) address + index * Size, ptr, length);
         }
 
         public CyEnumerator<T> GetEnumerator()
